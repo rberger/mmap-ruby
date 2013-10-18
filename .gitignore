@@ -1,0 +1,12 @@
+/ext/*.o
+/ext/*.bundle
+/ext/*.so
+/ext/*.dll
+/ext/mkmf.log
+/lib/mmap-ruby/*.bundle
+/lib/mmap-ruby/*.so
+/lib/mmap-ruby/*.dll
+/ext/Makefile
+/pkg
+/doc/*
+/tmp
