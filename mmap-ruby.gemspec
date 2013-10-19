@@ -37,7 +37,7 @@ Gem::Specification.new do |s|
     "lib/mmap_ruby.rb",
     "lib/mmap_ruby/mem_window.rb",
     "lib/mmap_ruby/mmap.bundle",
-    "test/test_file_window.rb"
+    "test/test_mem_window.rb"
   ]
   s.homepage = "http://github.com/brianosaurus/mmap-ruby"
   s.licenses = ["MIT"]
