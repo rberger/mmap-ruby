@@ -1,6 +1,6 @@
 # Usage
 
-This is a very simplistic interface.  It will only map anonymous memory.  It doesnot handle memory mapped files.  If someone wants to add to this gem please feel free.
+This is a very simplistic interface.  It will only map anonymous memory.  It does not handle memory mapped files.  If someone wants to add to this gem please feel free.
 
 ## Installation
 
