@@ -3,10 +3,11 @@
 /ext/*.so
 /ext/*.dll
 /ext/mkmf.log
-/lib/mmap-ruby/*.bundle
-/lib/mmap-ruby/*.so
-/lib/mmap-ruby/*.dll
+/lib/mmap_ruby/*.bundle
+/lib/mmap_ruby/*.so
+/lib/mmap_ruby/*.dll
 /ext/Makefile
 /pkg
 /doc/*
 /tmp
+*.swp
