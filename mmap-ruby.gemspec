@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Woods"]
-  s.date = "2013-10-19"
+  s.date = "2013-10-21"
   s.description = ""
   s.email = "me@brian.biz"
   s.extensions = ["ext/mmap_ruby/extconf.rb"]
@@ -36,7 +36,6 @@ Gem::Specification.new do |s|
     "ext/mmap_ruby/mmap.c",
     "lib/mmap_ruby.rb",
     "lib/mmap_ruby/mem_window.rb",
-    "lib/mmap_ruby/mmap.bundle",
     "mmap-ruby.gemspec",
     "test/test_mem_window.rb"
   ]
