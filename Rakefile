@@ -25,6 +25,13 @@ Jeweler::Tasks.new do |gem|
 end
 Jeweler::RubygemsDotOrgTasks.new
 
+gem 'rake-compiler', '>= 0.7.0'
+require 'rake/extensiontask'
+Rake::ExtensionTask.new('mmap_ruby') do |ext|
+    ext.name = "mmap"
+    ext.lib_dir = File.join('lib', 'mmap_ruby')
+end
+
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
   test.libs << 'lib' << 'test'
