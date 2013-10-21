@@ -1,6 +1,6 @@
 # Usage
 
-How to use mmap-ruby
+This is a very simplistic interface.  It will only map anonymous memory.  It doesnot handle memory mapped files.  If someone wants to add to this gem please feel free.
 
 ## Installation
 
@@ -17,7 +17,7 @@ Add this to your gemfile
 
     @mw = MmapRuby::MemWindow.new(4096)
     @mw.write(offset, len, data)
-    @mw.read(offset)
+    @mw.read(offset, len)
 
     @mw.mlock(offset, 4096)
     @mf.unlock(offset, 4096)
