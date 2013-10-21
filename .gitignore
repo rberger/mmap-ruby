@@ -1,7 +1,7 @@
-/ext/*.o
-/ext/*.bundle
-/ext/*.so
-/ext/*.dll
+/ext/**/*.o
+/ext/**/*.bundle
+/ext/**/*.so
+/ext/**/*.dll
 /ext/mkmf.log
 /lib/mmap_ruby/*.bundle
 /lib/mmap_ruby/*.so
