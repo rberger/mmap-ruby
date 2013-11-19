@@ -1,24 +1,41 @@
-# Copyright (c) 2009 Johan Sørensen
-# 
-# Permission is hereby granted, free of charge, to any person obtaining
-# a copy of this software and associated documentation files (the
-# 'Software'), to deal in the Software without restriction, including
-# without limitation the rights to use, copy, modify, merge, publish,
-# distribute, sublicense, and/or sell copies of the Software, and to
-# permit persons to whom the Software is furnished to do so, subject to
-# the following conditions:
-# 
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 $:.unshift File.dirname(__FILE__)
 require "mmap_ruby/mmap"
-require "mmap_ruby/mem_window"
+
+class MmapRuby
+  def initialize(len)
+    @mmap = MmapRuby::Mmap.new(len)
+  end
+  
+  # unmaps the mmap'ed file
+  def close
+    @mmap.close
+    @mmap = nil
+  end
+  alias_method :unmap, :close
+
+  # Read +length+ bytes starting from the current offset
+  def read(offset, length)
+    @mmap.read(offset, length)
+  end
+
+  def write(offset, length, bytes)
+    @mmap.write(offset, length, bytes)  
+  end
+
+  def mlock(len)
+    @mmap.mlock(len)
+  end
+
+  def munlock(len)
+    @mmap.munlock(len)
+  end
+
+  def madvise(len, advice)
+    @mmap.madvise(len, advice)
+  end
+
+  # Return size of mapped file
+  def size
+    @mmap.size
+  end
+end

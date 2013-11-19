@@ -35,15 +35,14 @@ typedef struct {
 	size_t len;
 } mmap_ruby_map;
 
-static VALUE mod_mmap_ruby;
+static VALUE class_mmap_ruby;
 static VALUE mr_mmap;
 static VALUE mr_map_data;
 
 /*
  * Document-method: new
- * call-seq: SimpleMMap::MappedFile.new(path)
  *
- * mmap() the file at +path+
+ * mmap() some anonymous memory of length +vlength+
  */
 static VALUE mr_mmap_initialize(VALUE vself, VALUE vlength)
 {
@@ -91,14 +90,43 @@ static VALUE mr_mmap_close(VALUE vself)
 }
 
 /*
- * Document-method: mlock
- * call-seq: obj.read_window_data(offset, length)
+ * Document-method: madvise
+ * call-seq: obj.madvise(length, advice)
  *
- * Read +length+ bytes starting at +offset+
+ * Give advice to the mmaped memory
  */
-static VALUE mr_mmap_mlock(VALUE vself, VALUE voffset, VALUE vlength) 
+static VALUE mr_mmap_madvise(VALUE vself, VALUE vlength, VALUE vadvice) 
 {
-  size_t offset = NUM2INT(voffset);
+  size_t length = NUM2INT(vlength);
+  int advice = NUM2INT(vadvice);
+
+  VALUE vmr_map;
+  mmap_ruby_map *mr_map;
+  
+  vmr_map = rb_ivar_get(vself, rb_intern("@mmap_data"));
+  Data_Get_Struct(vmr_map, mmap_ruby_map, mr_map);
+  
+  // If the range overflows, return part that overlaps
+  if (length > mr_map->len) {
+    length = mr_map->len;
+  }
+
+  if (madvise(mr_map->map, length, advice) == 0) {
+    return Qtrue;
+  } 
+  else {
+    return Qfalse;
+  }
+}
+
+/*
+ * Document-method: lock memory
+ * call-seq: obj.mlock(length)
+ *
+ * Read +length+ bytes starting at beginning of mmaped memory
+ */
+static VALUE mr_mmap_mlock(VALUE vself, VALUE vlength) 
+{
   size_t length = NUM2INT(vlength);
   VALUE vmr_map;
   mmap_ruby_map *mr_map;
@@ -106,13 +134,9 @@ static VALUE mr_mmap_mlock(VALUE vself, VALUE voffset, VALUE vlength)
   vmr_map = rb_ivar_get(vself, rb_intern("@mmap_data"));
   Data_Get_Struct(vmr_map, mmap_ruby_map, mr_map);
   
-  if (offset < 0 || offset > mr_map->len) {
-    return Qnil;
-  }
-
   // If the range overflows, return part that overlaps
-  if ((offset + length) > mr_map->len) {
-    length = mr_map->len - offset;
+  if (length > mr_map->len) {
+    length = mr_map->len;
   }
 
   if (mlock(mr_map->map, length) == 0) {
@@ -124,14 +148,13 @@ static VALUE mr_mmap_mlock(VALUE vself, VALUE voffset, VALUE vlength)
 }
 
 /*
- * Document-method: read_window_data
- * call-seq: obj.read_window_data(offset, length)
+ * Document-method: unlock memory
+ * call-seq: obj.munlock(length)
  *
- * Read +length+ bytes starting at +offset+
+ * Unlock +length+ bytes
  */
-static VALUE mr_mmap_munlock(VALUE vself, VALUE voffset, VALUE vlength) 
+static VALUE mr_mmap_munlock(VALUE vself,VALUE vlength) 
 {
-  size_t offset = NUM2INT(voffset);
   size_t length = NUM2INT(vlength);
   VALUE vmr_map;
   mmap_ruby_map *mr_map;
@@ -139,19 +162,9 @@ static VALUE mr_mmap_munlock(VALUE vself, VALUE voffset, VALUE vlength)
   vmr_map = rb_ivar_get(vself, rb_intern("@mmap_data"));
   Data_Get_Struct(vmr_map, mmap_ruby_map, mr_map);
   
-  if (offset < 0 || offset > mr_map->len) {
-    return Qnil;
-  }
-
   // If the range overflows, return part that overlaps
-  if ((offset + length) > mr_map->len) {
-    length = mr_map->len - offset;
-  }
-
-
-  // If the range overflows, return part that overlaps
-  if ((offset + length) > mr_map->len) {
-    length = mr_map->len - offset;
+  if (length > mr_map->len) {
+    length = mr_map->len;
   }
 
   // simple enough
@@ -164,8 +177,8 @@ static VALUE mr_mmap_munlock(VALUE vself, VALUE voffset, VALUE vlength)
 }
 
 /*
- * Document-method: read_window_data
- * call-seq: obj.read_window_data(offset, length)
+ * Document-method: write data
+ * call-seq: obj.write(offset, length)
  *
  * Read +length+ bytes starting at +offset+
  */
@@ -196,12 +209,12 @@ static VALUE mr_mmap_write(VALUE vself, VALUE voffset, VALUE vlength, VALUE vbyt
 }
 
 /*
- * Document-method: read_window_data
- * call-seq: obj.read_window_data(offset, length)
+ * Document-method: read data
+ * call-seq: obj.read(offset, length)
  *
  * Read +length+ bytes starting at +offset+
  */
-static VALUE mr_mmap_read_window_data(VALUE vself, VALUE voffset, VALUE vlength) 
+static VALUE mr_mmap_read(VALUE vself, VALUE voffset, VALUE vlength) 
 {
   size_t offset = NUM2INT(voffset);
   size_t length = NUM2INT(vlength);
@@ -242,18 +255,42 @@ static VALUE mr_mmap_size(VALUE vself)
 
 void Init_mmap()
 {
-  mod_mmap_ruby = rb_define_module("MmapRuby");
+  class_mmap_ruby = rb_define_class("MmapRuby", rb_cObject);
   
-  mr_mmap = rb_define_class_under(mod_mmap_ruby, "Mmap", rb_cObject);
+  mr_mmap = rb_define_class_under(class_mmap_ruby, "Mmap", rb_cObject);
   rb_define_private_method(mr_mmap, "initialize", mr_mmap_initialize, 1);
   rb_define_method(mr_mmap, "close", mr_mmap_close, 0);
-  rb_define_method(mr_mmap, "read_window_data", mr_mmap_read_window_data, 2);
+  rb_define_method(mr_mmap, "read", mr_mmap_read, 2);
   rb_define_method(mr_mmap, "size", mr_mmap_size, 0);
 
   /* new stuff added by WOODS */
-  rb_define_method(mr_mmap, "mlock", mr_mmap_mlock, 2);
-  rb_define_method(mr_mmap, "munlock", mr_mmap_munlock, 2);
+  rb_define_method(mr_mmap, "mlock", mr_mmap_mlock, 1);
+  rb_define_method(mr_mmap, "munlock", mr_mmap_munlock, 1);
   rb_define_method(mr_mmap, "write", mr_mmap_write, 3);
+  rb_define_method(mr_mmap, "madvise", mr_mmap_madvise, 2);
+
+  rb_define_const(mr_mmap, "MADV_NORMAL", INT2FIX(MADV_NORMAL));
+  rb_define_const(mr_mmap, "MADV_SEQUENTIAL", INT2FIX(MADV_SEQUENTIAL));
+  rb_define_const(mr_mmap, "MADV_RANDOM", INT2FIX(MADV_RANDOM));
+  rb_define_const(mr_mmap, "MADV_WILLNEED", INT2FIX(MADV_WILLNEED));
+
+#ifdef __APPLE__ || __MACH__
+  rb_define_const(mr_mmap, "MADV_FREE", INT2FIX(MADV_FREE));
+  rb_define_const(mr_mmap, "MADV_ZERO_WIRED_PAGES", INT2FIX(MADV_ZERO_WIRED_PAGES));
+#endif
+
+#ifdef __linux__
+  rb_define_const(mr_mmap, "MADV_REMOVE", INT2FIX(MADV_REMOVE));
+  rb_define_const(mr_mmap, "MADV_DONTFORK", INT2FIX(MADV_DONTFORK));
+  rb_define_const(mr_mmap, "MADV_DOFORK", INT2FIX(MADV_DOFORK));
+  rb_define_const(mr_mmap, "MADV_HWPOISON", INT2FIX(MADV_HWPOISON));
+  rb_define_const(mr_mmap, "MADV_SOFT_OFFLINE", INT2FIX(MADV_SOFT_OFFLINE));
+  rb_define_const(mr_mmap, "MADV_MERGABLE", INT2FIX(MADV_MERGABLE));
+  rb_define_const(mr_mmap, "MADV_UNMERGABLE", INT2FIX(MADV_UNMERGABLE));
+  rb_define_const(mr_mmap, "MADV_HUGEPAGE", INT2FIX(MADV_HUGEPAGE));
+  rb_define_const(mr_mmap, "MADV_NOHUGEPAGE", INT2FIX(MADV_NOHUGEPAGE));
+  rb_define_const(mr_mmap, "MADV_DODUMP", INT2FIX(MADV_DODUMP));
+#endif
   
   mr_map_data = rb_define_class_under(mr_mmap, "MmapData", rb_cObject);
 }
