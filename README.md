@@ -15,11 +15,12 @@ Add this to your gemfile
     len = 4
     data = '1234'
 
-    @mw = MmapRuby::MemWindow.new(4096)
+    @mw = MmapRuby.new(4096)
     @mw.write(offset, len, data)
     @mw.read(offset, len)
 
-    @mw.mlock(offset, 4096)
-    @mf.unlock(offset, 4096)
+    @mw.lock(4096)
+    @mw.unlock(4096)
+    @mw.advise(4096, MmapRuby::MADV_SEQUENTIAL)
 
 

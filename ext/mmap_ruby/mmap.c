@@ -269,23 +269,23 @@ void Init_mmap()
   rb_define_method(mr_mmap, "write", mr_mmap_write, 3);
   rb_define_method(mr_mmap, "advise", mr_mmap_advise, 2);
 
-  rb_define_const(mr_mmap, "MADV_NORMAL", INT2FIX(MADV_NORMAL));
-  rb_define_const(mr_mmap, "MADV_SEQUENTIAL", INT2FIX(MADV_SEQUENTIAL));
-  rb_define_const(mr_mmap, "MADV_RANDOM", INT2FIX(MADV_RANDOM));
-  rb_define_const(mr_mmap, "MADV_WILLNEED", INT2FIX(MADV_WILLNEED));
+  rb_define_const(class_mmap_ruby, "MADV_NORMAL", INT2FIX(MADV_NORMAL));
+  rb_define_const(class_mmap_ruby, "MADV_SEQUENTIAL", INT2FIX(MADV_SEQUENTIAL));
+  rb_define_const(class_mmap_ruby, "MADV_RANDOM", INT2FIX(MADV_RANDOM));
+  rb_define_const(class_mmap_ruby, "MADV_WILLNEED", INT2FIX(MADV_WILLNEED));
 
 #if defined(__APPLE__) || defined(__MACH__)
-  rb_define_const(mr_mmap, "MADV_FREE", INT2FIX(MADV_FREE));
-  rb_define_const(mr_mmap, "MADV_ZERO_WIRED_PAGES", INT2FIX(MADV_ZERO_WIRED_PAGES));
+  rb_define_const(class_mmap_ruby, "MADV_FREE", INT2FIX(MADV_FREE));
+  rb_define_const(class_mmap_ruby, "MADV_ZERO_WIRED_PAGES", INT2FIX(MADV_ZERO_WIRED_PAGES));
 #endif
 
 #ifdef __linux__
-  rb_define_const(mr_mmap, "MADV_REMOVE", INT2FIX(MADV_REMOVE));
-  rb_define_const(mr_mmap, "MADV_DONTFORK", INT2FIX(MADV_DONTFORK));
-  rb_define_const(mr_mmap, "MADV_DOFORK", INT2FIX(MADV_DOFORK));
-  rb_define_const(mr_mmap, "MADV_HWPOISON", INT2FIX(MADV_HWPOISON));
-  rb_define_const(mr_mmap, "MADV_HUGEPAGE", INT2FIX(MADV_HUGEPAGE));
-  rb_define_const(mr_mmap, "MADV_NOHUGEPAGE", INT2FIX(MADV_NOHUGEPAGE));
+  rb_define_const(class_mmap_ruby, "MADV_REMOVE", INT2FIX(MADV_REMOVE));
+  rb_define_const(class_mmap_ruby, "MADV_DONTFORK", INT2FIX(MADV_DONTFORK));
+  rb_define_const(class_mmap_ruby, "MADV_DOFORK", INT2FIX(MADV_DOFORK));
+  rb_define_const(class_mmap_ruby, "MADV_HWPOISON", INT2FIX(MADV_HWPOISON));
+  rb_define_const(class_mmap_ruby, "MADV_HUGEPAGE", INT2FIX(MADV_HUGEPAGE));
+  rb_define_const(class_mmap_ruby, "MADV_NOHUGEPAGE", INT2FIX(MADV_NOHUGEPAGE));
 #endif
   
   mr_map_data = rb_define_class_under(mr_mmap, "MmapData", rb_cObject);

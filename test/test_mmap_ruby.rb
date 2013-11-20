@@ -30,7 +30,7 @@ class TestMmapRuby < Test::Unit::TestCase
   end
 
   def test_advise
-    assert_equal(true, @mw.advise(PAGE_SIZE, MmapRuby::Mmap::MADV_NORMAL))
+    assert_equal(true, @mw.advise(PAGE_SIZE, MmapRuby::MADV_NORMAL))
   end
 
   def test_size
