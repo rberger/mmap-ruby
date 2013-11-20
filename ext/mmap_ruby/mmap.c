@@ -95,7 +95,7 @@ static VALUE mr_mmap_close(VALUE vself)
  *
  * Give advice to the mmaped memory
  */
-static VALUE mr_mmap_madvise(VALUE vself, VALUE vlength, VALUE vadvice) 
+static VALUE mr_mmap_advise(VALUE vself, VALUE vlength, VALUE vadvice) 
 {
   size_t length = NUM2INT(vlength);
   int advice = NUM2INT(vadvice);
@@ -121,11 +121,11 @@ static VALUE mr_mmap_madvise(VALUE vself, VALUE vlength, VALUE vadvice)
 
 /*
  * Document-method: lock memory
- * call-seq: obj.mlock(length)
+ * call-seq: obj.lock(length)
  *
  * Read +length+ bytes starting at beginning of mmaped memory
  */
-static VALUE mr_mmap_mlock(VALUE vself, VALUE vlength) 
+static VALUE mr_mmap_lock(VALUE vself, VALUE vlength) 
 {
   size_t length = NUM2INT(vlength);
   VALUE vmr_map;
@@ -149,11 +149,11 @@ static VALUE mr_mmap_mlock(VALUE vself, VALUE vlength)
 
 /*
  * Document-method: unlock memory
- * call-seq: obj.munlock(length)
+ * call-seq: obj.unlock(length)
  *
  * Unlock +length+ bytes
  */
-static VALUE mr_mmap_munlock(VALUE vself,VALUE vlength) 
+static VALUE mr_mmap_unlock(VALUE vself,VALUE vlength) 
 {
   size_t length = NUM2INT(vlength);
   VALUE vmr_map;
@@ -264,10 +264,10 @@ void Init_mmap()
   rb_define_method(mr_mmap, "size", mr_mmap_size, 0);
 
   /* new stuff added by WOODS */
-  rb_define_method(mr_mmap, "mlock", mr_mmap_mlock, 1);
-  rb_define_method(mr_mmap, "munlock", mr_mmap_munlock, 1);
+  rb_define_method(mr_mmap, "lock", mr_mmap_lock, 1);
+  rb_define_method(mr_mmap, "unlock", mr_mmap_unlock, 1);
   rb_define_method(mr_mmap, "write", mr_mmap_write, 3);
-  rb_define_method(mr_mmap, "madvise", mr_mmap_madvise, 2);
+  rb_define_method(mr_mmap, "advise", mr_mmap_advise, 2);
 
   rb_define_const(mr_mmap, "MADV_NORMAL", INT2FIX(MADV_NORMAL));
   rb_define_const(mr_mmap, "MADV_SEQUENTIAL", INT2FIX(MADV_SEQUENTIAL));

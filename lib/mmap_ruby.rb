@@ -22,16 +22,16 @@ class MmapRuby
     @mmap.write(offset, length, bytes)  
   end
 
-  def mlock(len)
-    @mmap.mlock(len)
+  def lock(len)
+    @mmap.lock(len)
   end
 
-  def munlock(len)
-    @mmap.munlock(len)
+  def unlock(len)
+    @mmap.unlock(len)
   end
 
-  def madvise(len, advice)
-    @mmap.madvise(len, advice)
+  def advise(len, advice)
+    @mmap.advise(len, advice)
   end
 
   # Return size of mapped file

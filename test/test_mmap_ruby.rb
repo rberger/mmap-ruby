@@ -16,12 +16,12 @@ class TestMmapRuby < Test::Unit::TestCase
     @mw.write(0, 7, "abcdefg")
   end
 
-  def test_mlock
-    assert_equal(true, @mw.mlock(PAGE_SIZE))
+  def test_lock
+    assert_equal(true, @mw.lock(PAGE_SIZE))
   end
 
-  def test_munlock
-    assert_equal(true, @mw.munlock(PAGE_SIZE))
+  def test_unlock
+    assert_equal(true, @mw.unlock(PAGE_SIZE))
   end
 
   def test_read
@@ -29,8 +29,8 @@ class TestMmapRuby < Test::Unit::TestCase
     assert_equal("abc", @mw.read(0, 3))
   end
 
-  def test_madvise
-    assert_equal(true, @mw.madvise(PAGE_SIZE, MmapRuby::Mmap::MADV_NORMAL))
+  def test_advise
+    assert_equal(true, @mw.advise(PAGE_SIZE, MmapRuby::Mmap::MADV_NORMAL))
   end
 
   def test_size
