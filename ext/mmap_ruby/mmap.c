@@ -194,7 +194,7 @@ static VALUE mr_mmap_write(VALUE vself, VALUE voffset, VALUE vlength, VALUE vbyt
   vmr_map = rb_ivar_get(vself, rb_intern("@mmap_data"));
   Data_Get_Struct(vmr_map, mmap_ruby_map, mr_map);
   
-  if (offset < 0 || offset > mr_map->len) {
+  if (offset > mr_map->len) {
     return Qnil;
   }
 
@@ -224,7 +224,7 @@ static VALUE mr_mmap_read(VALUE vself, VALUE voffset, VALUE vlength)
   vmr_map = rb_ivar_get(vself, rb_intern("@mmap_data"));
   Data_Get_Struct(vmr_map, mmap_ruby_map, mr_map);
   
-  if (offset < 0 || offset > mr_map->len) {
+  if (offset > mr_map->len) {
     return Qnil;
   }
 
@@ -274,7 +274,7 @@ void Init_mmap()
   rb_define_const(mr_mmap, "MADV_RANDOM", INT2FIX(MADV_RANDOM));
   rb_define_const(mr_mmap, "MADV_WILLNEED", INT2FIX(MADV_WILLNEED));
 
-#ifdef __APPLE__ || __MACH__
+#if defined(__APPLE__) || defined(__MACH__)
   rb_define_const(mr_mmap, "MADV_FREE", INT2FIX(MADV_FREE));
   rb_define_const(mr_mmap, "MADV_ZERO_WIRED_PAGES", INT2FIX(MADV_ZERO_WIRED_PAGES));
 #endif
@@ -284,12 +284,8 @@ void Init_mmap()
   rb_define_const(mr_mmap, "MADV_DONTFORK", INT2FIX(MADV_DONTFORK));
   rb_define_const(mr_mmap, "MADV_DOFORK", INT2FIX(MADV_DOFORK));
   rb_define_const(mr_mmap, "MADV_HWPOISON", INT2FIX(MADV_HWPOISON));
-  rb_define_const(mr_mmap, "MADV_SOFT_OFFLINE", INT2FIX(MADV_SOFT_OFFLINE));
-  rb_define_const(mr_mmap, "MADV_MERGABLE", INT2FIX(MADV_MERGABLE));
-  rb_define_const(mr_mmap, "MADV_UNMERGABLE", INT2FIX(MADV_UNMERGABLE));
   rb_define_const(mr_mmap, "MADV_HUGEPAGE", INT2FIX(MADV_HUGEPAGE));
   rb_define_const(mr_mmap, "MADV_NOHUGEPAGE", INT2FIX(MADV_NOHUGEPAGE));
-  rb_define_const(mr_mmap, "MADV_DODUMP", INT2FIX(MADV_DODUMP));
 #endif
   
   mr_map_data = rb_define_class_under(mr_mmap, "MmapData", rb_cObject);
