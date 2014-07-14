@@ -11,3 +11,5 @@
 /doc/*
 /tmp
 *.swp
+.ruby-version
+Gemfile.lock

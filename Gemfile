@@ -5,12 +5,13 @@ source "http://rubygems.org"
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
-group :development do
-  gem 'multi_json', '>= 1.8.2'
-  gem 'rake-compiler', '>= 0.7.0'
-  gem "shoulda", ">= 0"
-  gem "bundler", "~> 1.0"
-  gem 'simplecov-rcov'
-  gem "jeweler", "~> 1.8.7"
-  gem 'byebug'
-end
+# group :development do
+#   gem 'multi_json', '>= 1.8.2'
+#   gem 'rake-compiler'
+#   gem "shoulda", ">= 0"
+# #  gem "bundler", "~> 1.0"
+#   gem 'simplecov-rcov'
+#   gem "jeweler", "~> 1.8.7"
+#   gem 'byebug'
+# end
+gemspec
